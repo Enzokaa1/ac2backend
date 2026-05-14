@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AC2 - Painel de Operações</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Arial, sans-serif; background: #f3f6fa; color: #0f172a; }
+        .layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+        .sidebar { background: #0f172a; color: #e2e8f0; padding: 16px; }
+        .sidebar h1 { font-size: 18px; margin: 0 0 14px; }
+        .menu { display: grid; gap: 6px; }
+        .menu button {
+            background: #1e293b; color: #e2e8f0; border: 1px solid #334155; border-radius: 4px;
+            text-align: left; padding: 8px; cursor: pointer;
+        }
+        .menu button.active { background: #334155; }
+        .content { padding: 20px; }
+        .panel { background: #fff; border: 1px solid #d7e0ea; border-radius: 6px; padding: 14px; }
+        .panel h2 { margin: 0 0 12px; font-size: 18px; }
+        .row { display: grid; gap: 8px; margin-bottom: 8px; }
+        .row.cols-2 { grid-template-columns: 1fr 1fr; }
+        .row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .row.cols-4 { grid-template-columns: repeat(4, 1fr); }
+        .row.cols-5 { grid-template-columns: repeat(5, 1fr); }
+        input, button { padding: 8px; border: 1px solid #c8d2de; border-radius: 4px; }
+        .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+        button { background: #0f172a; color: #fff; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #d7e0ea; padding: 8px; text-align: left; vertical-align: top; }
+        .hidden { display: none; }
+        pre { background: #0b1020; color: #d1e0ff; padding: 12px; border-radius: 6px; overflow: auto; min-height: 120px; margin-top: 12px; }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <h1>AC2 Operações</h1>
+        <div class="menu">
+            <button class="active" onclick="showScreen('setor', this)">Setor</button>
+            <button onclick="showScreen('funcionario', this)">Funcionário</button>
+            <button onclick="showScreen('projeto', this)">Projeto</button>
+            <button onclick="showScreen('tutor', this)">Tutor</button>
+            <button onclick="showScreen('animal', this)">Animal</button>
+            <button onclick="showScreen('especialidade', this)">Especialidade</button>
+            <button onclick="showScreen('veterinario', this)">Veterinário</button>
+            <button onclick="showScreen('consulta', this)">Consulta</button>
+            <button onclick="showScreen('prontuario', this)">Prontuário</button>
+            <button onclick="showScreen('vacinacao', this)">Vacinação</button>
+        </div>
+    </aside>
+
+    <main class="content">
+        <section id="screen-setor" class="panel">
+            <h2>Setor</h2>
+            <div class="row"><input id="setorNome" placeholder="Nome do setor"></div>
+            <div class="actions">
+                <button onclick="criarSetor()">Criar</button>
+                <button onclick="listarSetores()">Listar</button>
+                <input id="setorIdBusca" type="number" placeholder="ID setor">
+                <button onclick="buscarSetor()">Buscar por ID</button>
+            </div>
+            <table id="tableSetores" class="hidden"></table>
+        </section>
+
+        <section id="screen-funcionario" class="panel hidden">
+            <h2>Funcionário</h2>
+            <div class="row cols-2">
+                <input id="funcNome" placeholder="Nome">
+                <input id="funcSetorId" type="number" placeholder="Setor ID">
+            </div>
+            <div class="actions">
+                <button onclick="criarFuncionario()">Criar</button>
+                <button onclick="listarFuncionarios()">Listar</button>
+                <input id="funcIdProjetos" type="number" placeholder="ID funcionário">
+                <button onclick="projetosPorFuncionario()">Projetos do funcionário</button>
+            </div>
+            <table id="tableFuncionarios" class="hidden"></table>
+            <table id="tableProjetosFuncionario" class="hidden"></table>
+        </section>
+
+        <section id="screen-projeto" class="panel hidden">
+            <h2>Projeto</h2>
+            <div class="row cols-3">
+                <input id="projDescricao" placeholder="Descrição">
+                <input id="projInicio" type="date">
+                <input id="projFim" type="date">
+            </div>
+            <div class="actions">
+                <button onclick="criarProjeto()">Criar</button>
+                <button onclick="listarProjetos()">Listar</button>
+            </div>
+            <div class="actions">
+                <input id="projIdBusca" type="number" placeholder="ID projeto">
+                <button onclick="buscarProjeto()">Buscar por ID</button>
+                <input id="periodoInicio" type="date">
+                <input id="periodoFim" type="date">
+                <button onclick="projetosPorPeriodo()">Por período</button>
+            </div>
+            <div class="actions">
+                <input id="vincProjetoId" type="number" placeholder="Projeto ID">
+                <input id="vincFuncId" type="number" placeholder="Funcionário ID">
+                <button onclick="vincularFuncionarioProjeto()">Vincular funcionário</button>
+            </div>
+            <table id="tableProjetos" class="hidden"></table>
+        </section>
+
+        <section id="screen-tutor" class="panel hidden">
+            <h2>Tutor</h2>
+            <div class="row cols-2">
+                <input id="tutorNome" placeholder="Nome tutor">
+                <input id="tutorTelefone" placeholder="Telefone">
+            </div>
+            <div class="actions">
+                <button onclick="criarTutor()">Criar tutor</button>
+                <button onclick="listarTutores()">Listar tutores</button>
+                <input id="tutorIdBusca" type="number" placeholder="ID tutor">
+                <button onclick="buscarTutor()">Buscar por ID</button>
+            </div>
+            <table id="tableTutores" class="hidden"></table>
+        </section>
+
+        <section id="screen-animal" class="panel hidden">
+            <h2>Animal</h2>
+            <div class="row cols-5">
+                <input id="animalNome" placeholder="Nome animal">
+                <input id="animalEspecie" placeholder="Espécie">
+                <input id="animalRaca" placeholder="Raça">
+                <input id="animalIdade" type="number" placeholder="Idade">
+                <input id="animalTutorId" type="number" placeholder="Tutor ID">
+            </div>
+            <div class="actions">
+                <button onclick="criarAnimal()">Criar animal</button>
+                <button onclick="listarAnimais()">Listar animais</button>
+                <input id="animalIdBusca" type="number" placeholder="ID animal">
+                <button onclick="buscarAnimal()">Buscar por ID</button>
+                <button onclick="historicoAnimal()">Histórico</button>
+            </div>
+            <table id="tableAnimais" class="hidden"></table>
+        </section>
+
+        <section id="screen-especialidade" class="panel hidden">
+            <h2>Especialidade</h2>
+            <div class="row"><input id="espNome" placeholder="Nome especialidade"></div>
+            <div class="actions">
+                <button onclick="criarEspecialidade()">Criar especialidade</button>
+                <button onclick="listarEspecialidades()">Listar especialidades</button>
+            </div>
+            <table id="tableEspecialidades" class="hidden"></table>
+        </section>
+
+        <section id="screen-veterinario" class="panel hidden">
+            <h2>Veterinário</h2>
+            <div class="row cols-3">
+                <input id="vetNome" placeholder="Nome veterinário">
+                <input id="vetCrmv" placeholder="CRMV">
+                <input id="vetEspId" type="number" placeholder="Especialidade ID">
+            </div>
+            <div class="actions">
+                <button onclick="criarVeterinario()">Criar veterinário</button>
+                <button onclick="listarVeterinarios()">Listar veterinários</button>
+            </div>
+            <table id="tableVeterinarios" class="hidden"></table>
+        </section>
+
+        <section id="screen-consulta" class="panel hidden">
+            <h2>Consulta</h2>
+            <div class="row cols-5">
+                <input id="conAnimalId" type="number" placeholder="Animal ID">
+                <input id="conVetId" type="number" placeholder="Veterinário ID">
+                <input id="conEspId" type="number" placeholder="Especialidade ID">
+                <input id="conDataHora" type="datetime-local">
+                <input id="conMotivo" placeholder="Motivo">
+            </div>
+            <div class="actions">
+                <button onclick="criarConsulta()">Agendar consulta</button>
+                <button onclick="listarConsultas()">Listar consultas</button>
+                <input id="consultaIdBusca" type="number" placeholder="ID consulta">
+                <button onclick="buscarConsulta()">Buscar por ID</button>
+            </div>
+            <table id="tableConsultas" class="hidden"></table>
+        </section>
+
+        <section id="screen-prontuario" class="panel hidden">
+            <h2>Prontuário</h2>
+            <div class="row cols-4">
+                <input id="pronConsultaId" type="number" placeholder="Consulta ID">
+                <input id="pronDescricao" placeholder="Descrição">
+                <input id="pronDiagnostico" placeholder="Diagnóstico">
+                <input id="pronTratamento" placeholder="Tratamento">
+            </div>
+            <div class="actions">
+                <button onclick="criarProntuario()">Criar prontuário</button>
+                <button onclick="listarProntuarios()">Listar prontuários</button>
+            </div>
+            <table id="tableProntuarios" class="hidden"></table>
+        </section>
+
+        <section id="screen-vacinacao" class="panel hidden">
+            <h2>Vacinação</h2>
+            <div class="row cols-5">
+                <input id="vacAnimalId" type="number" placeholder="Animal ID">
+                <input id="vacNome" placeholder="Nome vacina">
+                <input id="vacData" type="date">
+                <input id="vacProx" type="date">
+                <input id="vacObs" placeholder="Observações">
+            </div>
+            <div class="actions">
+                <button onclick="criarVacinacao()">Registrar vacinação</button>
+                <button onclick="listarVacinacoes()">Listar vacinações</button>
+            </div>
+            <table id="tableVacinacoes" class="hidden"></table>
+        </div>
+        </section>
+
+        <div class="panel" style="margin-top:12px;">
+            <h2>Resposta da API</h2>
+            <pre id="output"></pre>
+        </div>
+    </main>
+</div>
+
+<script>
+    const out = document.getElementById("output");
+    const json = (v) => JSON.stringify(v, null, 2);
+    const show = (v) => out.textContent = typeof v === "string" ? v : json(v);
+
+    async function api(url, method = "GET", body = null) {
+        const res = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: body ? JSON.stringify(body) : null
+        });
+        let data = {};
+        try { data = await res.json(); } catch (_) {}
+        show(data);
+        if (!res.ok) throw new Error(data.mensagem || "Erro na requisição");
+        return data;
+    }
+
+    const v = (id) => document.getElementById(id).value;
+    const n = (id) => Number(v(id));
+
+    function showScreen(name, btn) {
+        document.querySelectorAll("main section.panel").forEach(s => s.classList.add("hidden"));
+        document.getElementById(`screen-${name}`).classList.remove("hidden");
+        document.querySelectorAll(".menu button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+    }
+
+    function renderTable(tableId, data) {
+        const table = document.getElementById(tableId);
+        const list = Array.isArray(data) ? data : [data];
+        if (!list.length) {
+            table.classList.remove("hidden");
+            table.innerHTML = "<tr><td>Sem dados</td></tr>";
+            return;
+        }
+        const headers = Object.keys(list[0]);
+        const thead = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>`;
+        const tbody = `<tbody>${list.map(row =>
+            `<tr>${headers.map(h => `<td>${formatCell(row[h])}</td>`).join("")}</tr>`
+        ).join("")}</tbody>`;
+        table.innerHTML = thead + tbody;
+        table.classList.remove("hidden");
+    }
+
+    function formatCell(val) {
+        if (val === null || val === undefined) return "";
+        if (typeof val === "object") return `<pre style="margin:0;min-height:auto;background:transparent;color:inherit;padding:0;">${json(val)}</pre>`;
+        return String(val);
+    }
+
+    const criarSetor = async () => { const d = await api("/api/setores", "POST", { nome: v("setorNome") }); renderTable("tableSetores", [d]); };
+    const listarSetores = async () => { const d = await api("/api/setores"); renderTable("tableSetores", d); };
+    const buscarSetor = async () => { const d = await api(`/api/setores/${n("setorIdBusca")}`); renderTable("tableSetores", [d]); };
+
+    const criarFuncionario = async () => { const d = await api("/api/funcionarios", "POST", { nome: v("funcNome"), setorId: n("funcSetorId") }); renderTable("tableFuncionarios", [d]); };
+    const listarFuncionarios = async () => { const d = await api("/api/funcionarios"); renderTable("tableFuncionarios", d); };
+    const projetosPorFuncionario = async () => { const d = await api(`/api/funcionarios/${n("funcIdProjetos")}/projetos`); renderTable("tableProjetosFuncionario", d); };
+
+    const criarProjeto = async () => { const d = await api("/api/projetos", "POST", { descricao: v("projDescricao"), dataInicio: v("projInicio"), dataFim: v("projFim") }); renderTable("tableProjetos", [d]); };
+    const listarProjetos = async () => { const d = await api("/api/projetos"); renderTable("tableProjetos", d); };
+    const buscarProjeto = async () => { const d = await api(`/api/projetos/${n("projIdBusca")}`); renderTable("tableProjetos", [d]); };
+    const projetosPorPeriodo = async () => { const d = await api(`/api/projetos/periodo?inicio=${v("periodoInicio")}&fim=${v("periodoFim")}`); renderTable("tableProjetos", d); };
+    const vincularFuncionarioProjeto = async () => { const d = await api(`/api/projetos/${n("vincProjetoId")}/funcionarios/${n("vincFuncId")}`, "POST"); renderTable("tableProjetos", [d]); };
+
+    const criarTutor = async () => { const d = await api("/api/tutores", "POST", { nome: v("tutorNome"), telefone: v("tutorTelefone") }); renderTable("tableTutores", [d]); };
+    const listarTutores = async () => { const d = await api("/api/tutores"); renderTable("tableTutores", d); };
+    const buscarTutor = async () => { const d = await api(`/api/tutores/${n("tutorIdBusca")}`); renderTable("tableTutores", [d]); };
+
+    const criarAnimal = async () => { const d = await api("/api/animais", "POST", {
+        nome: v("animalNome"), especie: v("animalEspecie"), raca: v("animalRaca"), idade: n("animalIdade"), tutorId: n("animalTutorId")
+    }); renderTable("tableAnimais", [d]); };
+    const listarAnimais = async () => { const d = await api("/api/animais"); renderTable("tableAnimais", d); };
+    const buscarAnimal = async () => { const d = await api(`/api/animais/${n("animalIdBusca")}`); renderTable("tableAnimais", [d]); };
+    const historicoAnimal = async () => { const d = await api(`/api/animais/${n("animalIdBusca")}/historico`); renderTable("tableAnimais", [d]); };
+
+    const criarEspecialidade = async () => { const d = await api("/api/especialidades", "POST", { nome: v("espNome") }); renderTable("tableEspecialidades", [d]); };
+    const listarEspecialidades = async () => { const d = await api("/api/especialidades"); renderTable("tableEspecialidades", d); };
+
+    const criarVeterinario = async () => { const d = await api("/api/veterinarios", "POST", { nome: v("vetNome"), crmv: v("vetCrmv"), especialidadeId: n("vetEspId") }); renderTable("tableVeterinarios", [d]); };
+    const listarVeterinarios = async () => { const d = await api("/api/veterinarios"); renderTable("tableVeterinarios", d); };
+
+    const criarConsulta = async () => { const d = await api("/api/consultas", "POST", {
+        animalId: n("conAnimalId"),
+        veterinarioId: n("conVetId"),
+        especialidadeId: n("conEspId"),
+        dataHora: v("conDataHora"),
+        motivo: v("conMotivo")
+    }); renderTable("tableConsultas", [d]); };
+    const listarConsultas = async () => { const d = await api("/api/consultas"); renderTable("tableConsultas", d); };
+    const buscarConsulta = async () => { const d = await api(`/api/consultas/${n("consultaIdBusca")}`); renderTable("tableConsultas", [d]); };
+
+    const criarProntuario = async () => { const d = await api("/api/prontuarios", "POST", {
+        consultaId: n("pronConsultaId"),
+        descricao: v("pronDescricao"),
+        diagnostico: v("pronDiagnostico"),
+        tratamento: v("pronTratamento")
+    }); renderTable("tableProntuarios", [d]); };
+    const listarProntuarios = async () => { const d = await api("/api/prontuarios"); renderTable("tableProntuarios", d); };
+
+    const criarVacinacao = async () => { const d = await api("/api/vacinacoes", "POST", {
+        animalId: n("vacAnimalId"),
+        nomeVacina: v("vacNome"),
+        dataAplicacao: v("vacData"),
+        proximaDose: v("vacProx"),
+        observacoes: v("vacObs")
+    }); renderTable("tableVacinacoes", [d]); };
+    const listarVacinacoes = async () => { const d = await api("/api/vacinacoes"); renderTable("tableVacinacoes", d); };
+</script>
+</body>
+</html>
