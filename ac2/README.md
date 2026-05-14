@@ -1,6 +1,6 @@
 # AC2 - Projetos + PetCare (Spring Boot)
 
-Backend monolítico para avaliação de Desenvolvimento Web Back-End com:
+Backend para avaliação de Desenvolvimento Web Back-End com:
 1. Sistema de Controle de Projetos
 2. Sistema PetCare
 
@@ -94,16 +94,4 @@ Arquivo `src/main/resources/static/index.html`:
 - lista projetos
 - cadastra projeto
 
-## Roteiro de apresentação
-1. Criar setor
-2. Criar funcionário
-3. Criar projeto
-4. Vincular funcionário no projeto
-5. Buscar projeto com funcionários
-6. Buscar projetos por período e por funcionário
-7. Criar tutor, animal, especialidade e veterinário
-8. Agendar consulta
-9. Demonstrar erro de conflito de agenda
-10. Demonstrar erro de especialidade incompatível
-11. Registrar prontuário e vacinação
-12. Consultar histórico do animal
+
